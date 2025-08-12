@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rayfield Systems - Wind Power Control Room</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --heading-color: #1a202c;
+            --primary-blue: #007bff;
+            --dark-blue: #0056b3;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --green-accent: #28a745;
+            --purple-accent: #6f42c1;
+            --red-accent: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--heading-color);
+        }
+        
+        .logo i {
+            color: var(--primary-blue);
+            margin-right: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .main-title {
+            text-align: center;
+            font-size: 32px;
+            color: var(--heading-color);
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-blue);
+            border-radius: 2px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            color: var(--heading-color);
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .card .sub-heading {
+            font-size: 14px;
+            color: #888;
+            margin-top: -15px;
+            margin-bottom: 25px;
+        }
+
+        /* Upload Section */
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .drop-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: #fcfcfc;
+        }
+
+        .drop-area:hover {
+            border-color: var(--primary-blue);
+            background-color: #f7f9fc;
+        }
+
+        .drop-area.dragover {
+            border-color: var(--primary-blue);
+            background-color: #e6f7ff;
+        }
+
+        .drop-area i {
+            font-size: 48px;
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        .drop-area p {
+            color: #888;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .process-button {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .process-button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .process-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Analysis History */
+        .analysis-history-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .history-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+            color: var(--text-color);
+        }
+
+        .history-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .history-file-name {
+            font-weight: 500;
+        }
+        
+        .history-time {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .view-full-history-button {
+            background: none;
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .view-full-history-button:hover {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        /* AI Data Analysis */
+        .ai-data-analysis {
+            grid-column: 1 / -1;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .ai-data-analysis.show {
+            display: block;
+        }
+
+        .ai-metrics {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .metric-box {
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            min-width: 180px;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.02);
+        }
+
+        .metric-box.box-1 { background-color: #e6f7ff; border-color: #91d5ff; }
+        .metric-box.box-2 { background-color: #e9fdf3; border-color: #b7eb8f; }
+        .metric-box.box-3 { background-color: #f9e6ff; border-color: #d1b3e8; }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary-blue);
+        }
+
+        .metric-box.box-1 .metric-value { color: #1890ff; }
+        .metric-box.box-2 .metric-value { color: var(--green-accent); }
+        .metric-box.box-3 .metric-value { color: var(--purple-accent); }
+
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .analysis-output {
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+        }
+        
+        .analysis-output h3 {
+            color: var(--heading-color);
+            font-size: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-blue);
+            padding-left: 10px;
+        }
+
+        .numerical-output {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .ai-insights-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .ai-insights-list li {
+            background-color: #f7faff;
+            border-left: 4px solid var(--primary-blue);
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 15px;
+            color: var(--text-color);
+        }
+
+        /* Prediction Section */
+        .prediction-section {
+            grid-column: 1 / -1;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .prediction-section.show {
+            display: block;
+        }
+
+        .prediction-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: var(--heading-color);
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .predict-button {
+            background-color: var(--green-accent);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .predict-button:hover {
+            background-color: #218838;
+        }
+
+        .prediction-result {
+            background-color: #e9fdf3;
+            border: 1px solid #b7eb8f;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .prediction-result.show {
+            display: block;
+        }
+
+        .prediction-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--green-accent);
+            margin-bottom: 10px;
+        }
+
+        /* Loading and Error States */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-blue);
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-line;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--heading-color);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 40px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .footer-logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #f0f2f5;
+        }
+        
+        .footer-logo i {
+            color: #f0f2f5;
+            margin-right: 10px;
+        }
+
+        .footer-contacts p {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #cccccc;
+        }
+
+        .footer-contacts p:first-child {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .footer .copyright {
+            font-size: 13px;
+            margin-top: 20px;
+            color: #999;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+                margin-bottom: 30px;
+            }
+            .metric-box {
+                flex-basis: 48%;
+            }
+            .prediction-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header .logo {
+                margin-bottom: 10px;
+            }
+            .metric-box {
+                flex-basis: 100%;
+            }
+            .main-title {
+                font-size: 26px;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-wind"></i> Rayfield Systems - Wind Power Control
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="main-title">Automating Wind Power Control Room Operations</h1>
+
+        <div class="grid-container">
+            <!-- Upload CSV Files Section -->
+            <section class="card upload-section">
+                <h2>Upload Wind Power Data</h2>
+                <p class="sub-heading">Import your wind turbine data for AI analysis</p>
+                <form class="upload-form" id="uploadForm">
+                    <label for="csv_file" class="drop-area" id="dropArea">
+                        <i class="fas fa-file-csv"></i>
+                        <p>Drag & drop CSV files here or click to browse</p>
+                        <input type="file" id="csv_file" name="csv_file" accept=".csv" style="display: none;">
+                    </label>
+                    <button type="button" class="process-button" id="processButton">Process Files</button>
+                </form>
+                <div class="loading" id="uploadLoading">
+                    <i class="fas fa-spinner fa-spin"></i> Processing data...
+                </div>
+                <div class="error" id="uploadError"></div>
+                <div class="success" id="uploadSuccess"></div>
+            </section>
+
+            <!-- Analysis History Section -->
+            <section class="card analysis-history">
+                <h2>Analysis History</h2>
+                <p class="sub-heading">View previous wind power analysis results</p>
+                <div class="analysis-history-content">
+                    <ul class="history-list" id="historyList">
+                        <li>
+                            <span class="history-file-name">No analysis yet</span>
+                            <span class="history-time">Upload data to start</span>
+                        </li>
+                    </ul>
+                    <button class="view-full-history-button" onclick="loadHistory()">Refresh History</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Power Prediction Section -->
+        <section class="card prediction-section" id="predictionSection">
+            <h2>Real-time Power Prediction</h2>
+            <p class="sub-heading">Predict wind power output based on current conditions</p>
+            <form class="prediction-form" id="predictionForm">
+                <div class="form-group">
+                    <label for="temperature">Temperature (°F)</label>
+                    <input type="number" id="temperature" step="0.1" placeholder="e.g., 68.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="humidity">Relative Humidity (%)</label>
+                    <input type="number" id="humidity" min="0" max="100" step="0.1" placeholder="e.g., 65.2" required>
+                </div>
+                <div class="form-group">
+                    <label for="dewpoint">Dew Point (°F)</label>
+                    <input type="number" id="dewpoint" step="0.1" placeholder="e.g., 45.3" required>
+                </div>
+                <div class="form-group">
+                    <label for="windspeed10">Wind Speed 10m (m/s)</label>
+                    <input type="number" id="windspeed10" min="0" step="0.1" placeholder="e.g., 8.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="windspeed100">Wind Speed 100m (m/s)</label>
+                    <input type="number" id="windspeed100" min="0" step="0.1" placeholder="e.g., 12.3" required>
+                </div>
+                <div class="form-group">
+                    <label for="winddirection10">Wind Direction 10m (°)</label>
+                    <input type="number" id="winddirection10" min="0" max="360" step="1" placeholder="e.g., 180" required>
+                </div>
+                <div class="form-group">
+                    <label for="winddirection100">Wind Direction 100m (°)</label>
+                    <input type="number" id="winddirection100" min="0" max="360" step="1" placeholder="e.g., 185" required>
+                </div>
+                <div class="form-group">
+                    <label for="windgusts">Wind Gusts (m/s)</label>
+                    <input type="number" id="windgusts" min="0" step="0.1" placeholder="e.g., 15.2" required>
+                </div>
+            </form>
+            <button type="button" class="predict-button" onclick="predictPower()">Predict Power Output</button>
+            <div class="prediction-result" id="predictionResult">
+                <div class="prediction-value" id="predictionValue">0%</div>
+                <p>Predicted Power Output</p>
+            </div>
+        </section>
+
+        <!-- AI Data Analysis Section -->
+        <section class="card ai-data-analysis" id="analysisSection">
+            <h2>AI Wind Power Analysis</h2>
+            <p class="sub-heading">Intelligent insights from your turbine data</p>
+            <div class="ai-metrics">
+                <div class="metric-box box-1">
+                    <p class="metric-value" id="accuracyMetric">0%</p>
+                    <p class="metric-label">Model Accuracy</p>
+                </div>
+                <div class="metric-box box-2">
+                    <p class="metric-value" id="recordsMetric">0</p>
+                    <p class="metric-label">Records Processed</p>
+                </div>
+                <div class="metric-box box-3">
+                    <p class="metric-value" id="insightsMetric">0</p>
+                    <p class="metric-label">AI Insights Generated</p>
+                </div>
+            </div>
+
+            <div class="analysis-output">
+                <h3>Model Performance</h3>
+                <pre class="numerical-output" id="numericalOutput">
+Model training in progress...
+Please upload wind power data to see results.
+                </pre>
+            </div>
+
+            <h3>AI Insights</h3>
+            <ul class="ai-insights-list" id="insightsList">
+                <li>Upload wind power data to generate AI insights</li>
+                <li>Train the model with historical turbine data</li>
+                <li>Get predictions for optimal power generation</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-wind"></i> Rayfield Systems
+            </div>
+            <div class="footer-contacts">
+                <p>Wind Power Control Room Automation</p>
+                <p>Email: rayfieldsystems@gmail.com</p>
+                <p>Phone: +7 777 777 77 77</p>
+                <p>Address: Renewable Energy Center, Green Valley</p>
+            </div>
+            <p class="copyright">&copy; 2025 Rayfield Systems. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedFile = null;
+        let modelTrained = false;
+
+        // File upload handling
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('csv_file');
+        const processButton = document.getElementById('processButton');
+
+        // Drag and drop functionality
+        dropArea.addEventListener('click', () => fileInput.click());
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect();
+            }
+        });
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (file) {
+                selectedFile = file;
+                dropArea.querySelector('p').textContent = `Selected: ${file.name}`;
+                processButton.disabled = false;
+            }
+        }
+
+        processButton.addEventListener('click', uploadFile);
+
+        async function uploadFile() {
+            if (!selectedFile) {
+                showError('Please select a CSV file first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('csv_file', selectedFile);
+
+            showLoading(true);
+            hideMessages();
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                showLoading(false);
+
+                if (result.success) {
+                    showSuccess(`File processed successfully! Model accuracy: ${result.accuracy.toFixed(1)}%`);
+                    updateAnalysisSection(result);
+                    loadHistory();
+                    modelTrained = true;
+                    document.getElementById('predictionSection').classList.add('show');
+                } else {
+                    showError(result.error);
+                }
+            } catch (error) {
+                showLoading(false);
+                showError('Error uploading file: ' + error.message);
+            }
+        }
+
+        function updateAnalysisSection(result) {
+            document.getElementById('accuracyMetric').textContent = `${result.accuracy.toFixed(1)}%`;
+            document.getElementById('recordsMetric').textContent = result.records_processed;
+            document.getElementById('insightsMetric').textContent = result.insights.length;
+
+            const numericalOutput = `Model Performance Metrics:
+Accuracy (R² Score): ${result.accuracy.toFixed(2)}%
+R² Score: ${result.r2_score.toFixed(4)}
+Records Processed: ${result.records_processed}
+Model Status: Trained and Ready
+
+The model has been successfully trained on your wind power data.
+You can now make real-time power predictions.`;
+            
+            document.getElementById('numericalOutput').textContent = numericalOutput;
+
+            const insightsList = document.getElementById('insightsList');
+            insightsList.innerHTML = '';
+            result.insights.forEach(insight => {
+                const li = document.createElement('li');
+                li.textContent = `• ${insight}`;
+                insightsList.appendChild(li);
+            });
+
+            document.getElementById('analysisSection').classList.add('show');
+        }
+
+        async function predictPower() {
+            if (!modelTrained) {
+                alert('Please upload and process wind power data first to train the model.');
+                return;
+            }
+
+            const formData = {
+                temperature_2m: parseFloat(document.getElementById('temperature').value),
+                relativehumidity_2m: parseFloat(document.getElementById('humidity').value),
+                dewpoint_2m: parseFloat(document.getElementById('dewpoint').value),
+                windspeed_10m: parseFloat(document.getElementById('windspeed10').value),
+                windspeed_100m: parseFloat(document.getElementById('windspeed100').value),
+                winddirection_10m: parseFloat(document.getElementById('winddirection10').value),
+                winddirection_100m: parseFloat(document.getElementById('winddirection100').value),
+                windgusts_10m: parseFloat(document.getElementById('windgusts').value)
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const powerPercentage = (result.prediction * 100).toFixed(1);
+                    document.getElementById('predictionValue').textContent = `${powerPercentage}%`;
+                    document.getElementById('predictionResult').classList.add('show');
+                } else {
+                    alert('Prediction error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error making prediction: ' + error.message);
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/history');
+                const result = await response.json();
+                
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = '';
+                
+                if (result.history.length === 0) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="history-file-name">No analysis yet</span>
+                        <span class="history-time">Upload data to start</span>
+                    `;
+                    historyList.appendChild(li);
+                } else {
+                    result.history.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <span class="history-file-name">${item.filename}</span>
+                            <span class="history-time">${item.timestamp}</span>
+                        `;
+                        historyList.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('uploadLoading');
+            if (show) {
+                loading.classList.add('show');
+                processButton.disabled = true;
+            } else {
+                loading.classList.remove('show');
+                processButton.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            const error = document.getElementById('uploadError');
+            
+            // Enhanced error message with helpful guidance
+            let enhancedMessage = message;
+            if (message.includes('Missing required columns')) {
+                enhancedMessage = `❌ ${message}\n\n📋 Required CSV columns:\n• Time\n• temperature_2m\n• relativehumidity_2m\n• dewpoint_2m\n• windspeed_10m\n• windspeed_100m\n• winddirection_10m\n• winddirection_100m\n• windgusts_10m\n• Power\n\n💡 Please check the CSV_FORMAT_GUIDE.md file for detailed format requirements.`;
+            } else if (message.includes('base_estimator')) {
+                enhancedMessage = `⚠️ Model compatibility issue detected. The system is automatically handling this - please try uploading your file again.`;
+            }
+            
+            error.innerHTML = enhancedMessage.replace(/\n/g, '<br>');
+            error.classList.add('show');
+        }
+
+        function showSuccess(message) {
+            const success = document.getElementById('uploadSuccess');
+            success.textContent = message;
+            success.classList.add('show');
+        }
+
+        function hideMessages() {
+            document.getElementById('uploadError').classList.remove('show');
+            document.getElementById('uploadSuccess').classList.remove('show');
+        }
+
+        // Load history on page load
+        document.addEventListener('DOMContentLoaded', loadHistory);
+    </script>
+
+</body>
+</html>
